@@ -1,0 +1,3 @@
+# Client ignores
+src/client/node_modules
+src/client/package-lock.json
