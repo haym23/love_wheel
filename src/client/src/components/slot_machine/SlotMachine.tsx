@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { Spinner } from './Spinner'
 import './SlotMachine.css';
 
@@ -12,29 +12,43 @@ type SlotState = {
 }
 
 class SlotMachine extends React.Component<SlotProps, SlotState> {
-  private _spinner1 = new Spinner({
-    timer: 1000,
-    images: this.props.images,
-    onFinish: () => {},
-  });
-
-
+  private spinner1 = React.useRef<Spinner>();
+  private spinner2 = React.useRef<Spinner>();
+  private spinner3 = React.useRef<Spinner>();
 
   handleClick() {
-
+    this.spinner1.current?.forceUpdateHandler();
+    // this._spinner2?.current?.forceUpdateHandler();
+    // this._spinner3?.current?.forceUpdateHandler();
   }
-  
+
   finishHandler(value: number) {
   }
 
   render () {
     return (
       <div>
-        <Spinner ref={(child) => {
-          this._spinner1 = child;
-        }} images={this.props.images} onClick={this.handleClick} timer={1000}/>
-        <Spinner images={this.props.images} onFinish={this.handleClick} timer={1400}/>
-        <Spinner images={this.props.images} onClick={this.handleClick} timer={2200}/>
+        <Spinner
+          images={this.props.images}
+          onFinish={() => {}}
+          timer={1000}
+          lastPosition={1}
+          ref={this.spinner1} 
+        />
+        <Spinner
+          ref={this.spinner2} 
+          images={this.props.images}
+          onFinish={() => {}}
+          timer={1400}
+          lastPosition={1}
+        />
+        <Spinner 
+          ref={this._spinner3} 
+          images={this.props.images}
+          onFinish={() => {}}
+          timer={2200}
+          lastPosition={1}
+        />
         <br />
         <button onClick={this.handleClick}>Spin</button>
       </div>

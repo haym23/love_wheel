@@ -3,6 +3,7 @@ import React from 'react';
 type SpinnerProps = {
     images: string[],
     timer: number,
+    lastPosition: number,
     onFinish: () => void,
 }
 
@@ -23,7 +24,7 @@ class Spinner extends React.Component<SpinnerProps, SpinnerState> {
       timer: 0,
 			position: 0,
       timeRemaining: 0,
-			lastPosition: null
+			lastPosition: this.props.lastPosition,
 		};
   };
 
