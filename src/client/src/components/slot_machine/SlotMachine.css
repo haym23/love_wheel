@@ -28,12 +28,16 @@ body {
   margin: 5px;
 }
 
-.boxes {
-  /* transform: translateY(0); */
-  transition: transform 1s ease-in-out;
+.reel {
+  /* transition-timing-function: ease-in-out; */
+  /* transition: transform s ease-in-out; */
 }
 
-.box {
+.blur-in-out {
+  transition-timing-function: cubic-bezier(0.3, 1, 0.7, 1);
+}
+
+.image {
   display: flex;
   justify-content: center;
   align-items: center;
