@@ -19,6 +19,11 @@ body {
   display: flex;
 }
 
+.nameplate {
+  text-align: left;
+  position: absolute;
+}
+
 .door {
   background: #fafafa;
   width: 100px;
@@ -30,11 +35,7 @@ body {
 
 .reel {
   /* transition-timing-function: ease-in-out; */
-  /* transition: transform s ease-in-out; */
-}
-
-.blur-in-out {
-  transition-timing-function: cubic-bezier(0.3, 1, 0.7, 1);
+  /* transition: transform 1s ease-in-out; */
 }
 
 .image {
@@ -62,4 +63,8 @@ button {
   bottom: 0;
   width: 100%;
   text-align: center;
+}
+
+.name {
+  font-size: 15px;
 }
