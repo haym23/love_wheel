@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import { SlotMachine } from './components';
+import { Holder } from './components';
 
 function App() {
 
   return (
     <div className="App">
-      <SlotMachine />
+      <Holder />
     </div>
   );
 }

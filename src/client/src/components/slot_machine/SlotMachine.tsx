@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './SlotMachine.css';
 
-// type SlotProps = {
-//   // The images to use for the slots
-//   images: string[],
-// };
+type SlotProps = {
+  // The images to use for the slots
+  // images: string[],
+  spinning: boolean,
+};
 
 const items = [
   '🍭',
@@ -29,80 +30,15 @@ const items = [
  * @description Renders a 3 window slot machine 
  *  using the above items
  */
-const SlotMachine: React.FC = () => {
-  const [durations] = useState([1, 2, 3]);
+const SlotMachine: React.FC<SlotProps> = (props) => {
   const doors = useRef<HTMLDivElement>(null);
-  const nameplate = useRef<HTMLDivElement>(null);
 
   /**
-   * init Function
+   * spin function
    * 
-   * @description Reset the windows back to the original value
-   *  (❓)
+   * @description Move the image reel from top to bottom
    */
-  function init() {
-    initNames();
-
-    // Shallow copy items
-    const arr = items;
-
-    if (doors.current) {
-      const divs = doors.current.querySelectorAll('.door') as NodeListOf<HTMLElement>;
-      divs.forEach((div, index) => {
-        const reel = div.querySelector('.reel') as HTMLElement;
-        const reelClone = reel.cloneNode(false) as HTMLElement;
-        const pool = ['❓'];
-
-        pool.push(...shuffle(arr));
-
-        for (let i = pool.length - 1; i >=0; --i) {
-          const imgDiv = document.createElement('div');
-          imgDiv.classList.add('image');
-          imgDiv.style.width = div.clientWidth + 'px';
-          imgDiv.style.height = div.clientHeight + 'px';
-          imgDiv.textContent = pool[i];
-          reelClone.appendChild(imgDiv);
-        }
-
-        reelClone.style.transitionDuration = `${durations[index] > 0 ? durations[index] : 1}s`;
-        reelClone.style.transform = `translateY(-${div.clientHeight * (pool.length - 1)}px)`;
-        div.replaceChild(reelClone, reel);
-      });
-    }
-  }
-
-  /**
-   * init names Function
-   * 
-   * @description Reset the nameplate for later
-   *  (❓)
-   */
-  function initNames() {
-    if (nameplate.current) {
-      console.log(nameplate.current);
-      const name = nameplate.current.querySelector('.reel') as HTMLElement;
-      const nameClone = name.cloneNode(false) as HTMLElement;
-
-      const pool = ['Name'];
-
-      pool.push(...shuffle(['Mitchell', 'Sam', 'Todd']));
-
-      for (let i = pool.length - 1; i >=0; --i) {
-        const imgDiv = document.createElement('div');
-        imgDiv.classList.add('image');
-        imgDiv.style.width = nameplate.current.clientWidth + 'px';
-        imgDiv.style.height = nameplate.current.clientHeight + 'px';
-        imgDiv.textContent = pool[i];
-        nameClone.appendChild(imgDiv);
-      }
-
-      nameClone.style.transitionDuration = `3s`;
-      nameClone.style.transform = `translateY(-${nameplate.current.clientHeight * (pool.length - 1)}px)`;
-      nameplate.current.replaceChild(nameClone, name);
-    }
-  }
-
-  function spin() {
+  const spin = () => {
     if (doors.current) {
       const divs = doors.current.querySelectorAll('.door') as NodeListOf<HTMLElement>;
       divs.forEach((div) => {
@@ -110,8 +46,17 @@ const SlotMachine: React.FC = () => {
         reel.style.transform = 'translateY(0)'
       });
     }
-  }
+  };
 
+  /**
+   * shuffle
+   * 
+   * @description Create a random array of images to reel through
+   * 
+   * @todo Change this to accept a parameter, for what the last item should be
+   * 
+   * @param arr[] Array of items to shuffle
+   */
   function shuffle([...arr]) {
     let m = arr.length;
     while (m) {
@@ -119,19 +64,61 @@ const SlotMachine: React.FC = () => {
       [arr[m], arr[i]] = [arr[i], arr[m]];
     }
     return arr;
-  }
+  };
 
+  /**
+   * Built in function useEffect
+   * 
+   * @description Hook function that is called whever the state is changed
+   */
   useEffect(() => {
-    init();
-  });
+    const durations = [1, 2, 3];
+    /**
+     * init Function
+     * 
+     * @description Reset the windows back to the original value
+     *  (❓)
+     */
+    const init = () => {
+      // Shallow copy items
+      const arr = items;
+
+      if (doors.current) {
+        const divs = doors.current.querySelectorAll('.door') as NodeListOf<HTMLElement>;
+        divs.forEach((div, index) => {
+          const reel = div.querySelector('.reel') as HTMLElement;
+          const reelClone = reel.cloneNode(false) as HTMLElement;
+          const pool = ['❓'];
+
+          pool.push(...shuffle(arr));
+
+          for (let i = pool.length - 1; i >=0; --i) {
+            const imgDiv = document.createElement('div');
+            imgDiv.classList.add('image');
+            imgDiv.style.width = div.clientWidth + 'px';
+            imgDiv.style.height = div.clientHeight + 'px';
+            // TODO change this to style.backgroundImage
+            imgDiv.textContent = pool[i];
+            reelClone.appendChild(imgDiv);
+          }
+
+          // Add effects, slide reel down
+          reelClone.style.transitionDuration = `${durations[index] > 0 ? durations[index] : 1}s`;
+          reelClone.style.transform = `translateY(-${div.clientHeight * (pool.length - 1)}px)`;
+          div.replaceChild(reelClone, reel);
+        });
+      }
+    };
+
+    if (props.spinning) {
+      spin();
+    } else {
+      init();
+    }
+  }, [props.spinning]);
 
   return (
     <div id="app">
-
-      <div className="nameplate" ref={nameplate}>
-        <div className="reel">
-        </div>
-      </div>
 
       <div className="doors" ref={doors}>
         <div className="door">
@@ -150,10 +137,6 @@ const SlotMachine: React.FC = () => {
         </div>
       </div>
 
-      <div className="buttons">
-        <button id="spinner" onClick={spin}>Play</button>
-        <button id="reseter" onClick={init}>Reset</button>
-      </div>
     </div>
   )
 }
